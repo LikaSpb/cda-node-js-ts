@@ -1,4 +1,4 @@
-import * as pokemonRepository from '../../infrastructure/repositories/pokemonRepository';
+import * as pokemonRepository from "../../infrastructure/repositories/pokemonRepository";
 
 export const getAllPokemons = async () => {
   return await pokemonRepository.findAll();
