@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "name": "Bulbizarre",
+    "type": "Plante"
+  },
+  {
+    "id": 2,
+    "name": "Caninos",
+    "type": "Feu"
+  },
+  {
+    "id": 3,
+    "name": "Carapuce",
+    "type": "Eau"
+  },
+  {
+    "id": 4,
+    "name": "Électhor",
+    "type": "Électrique"
+  }
+]
