@@ -2,21 +2,21 @@
   {
     "id": 1,
     "name": "Bulbizarre",
-    "type": "Plante"
+    "typeId": [3]
   },
   {
     "id": 2,
     "name": "Caninos",
-    "type": "Feu"
+    "typeId": [2]
   },
   {
     "id": 3,
     "name": "Carapuce",
-    "type": "Eau"
+    "typeId": [1]
   },
   {
     "id": 4,
     "name": "Électhor",
-    "type": "Électrique"
+    "typeId": [4]
   }
 ]

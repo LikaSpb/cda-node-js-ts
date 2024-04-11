@@ -1,5 +1,10 @@
 export interface Pokemon {
-  id: number;
+  id?: number;
+  name: string;
+  typeId: number[];
+}
+
+export interface PokemonData {
   name: string;
   type: string;
 }
