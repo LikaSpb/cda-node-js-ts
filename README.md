@@ -38,7 +38,7 @@ Pour configurer ce projet sur votre machine locale, suivez ces étapes :
 Pour démarrer l'application, exécutez :
 
   ```
-  npm start
+  npm run dev
   ```
 
 
