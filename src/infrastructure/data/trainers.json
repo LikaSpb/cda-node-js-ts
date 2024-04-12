@@ -8,5 +8,10 @@
     "id": 2,
     "username": "testTrainer",
     "password": "$2b$10$ZU6xuagoIuXmNe8IITWSwO.xH3tcZpZ9wUo8VLosvza6WsneKor6W"
+  },
+  {
+    "id": 3,
+    "username": "newTrainer2",
+    "password": "$2b$10$AxQ9scGc8R8fg/nF2JySMOUY4P85oCDmum1.kvI6.9Oj788AtWyuy"
   }
 ]

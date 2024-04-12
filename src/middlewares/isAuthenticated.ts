@@ -1,31 +1,39 @@
 import { NextFunction, Request, Response } from "express";
-import { response } from "../utils/response";
 import env from "../config/env";
-
 import jwt from "jsonwebtoken";
 
 const { JWT_SECRET } = env;
 
+/**
+ * Middleware d'authentification pour vérifier le JWT fourni dans les en-têtes de requête.
+ * Si le JWT est valide, il décode le token et attache le payload au req.user pour être utilisé
+ * dans les routes suivantes. S'il n'y a pas de JWT, ou si le JWT est invalide, une réponse
+ * d'erreur est renvoyée.
+ *
+ * @param {Request} req - L'objet de requête Express, utilisé pour accéder aux en-têtes.
+ * @param {Response} res - L'objet de réponse Express, utilisé pour envoyer des réponses.
+ * @param {NextFunction} next - La fonction callback pour passer au middleware suivant.
+ */
 export const isAuthenticated = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { accessToken } = req.cookies;
-  if (!accessToken)
-    return response(res, { statusCode: 403, message: "Token missing" });
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer "))
+    return res.status(403).send({ message: "Token missing" });
+
+  const token = authHeader.split(" ")[1];
+
   try {
-    // on décode le jwt dans le cookie 'token' avec notre secret
-    const decoded = jwt.verify(accessToken, JWT_SECRET);
-    const { id, name } = decoded as jwt.JwtPayload;
+    // Décode le token en utilisant la clé secrète spécifiée et vérifie sa validité
+    const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
+    // Attache les données décodées à l'objet de requête pour une utilisation ultérieure
+    req.user = { id: decoded.id, name: decoded.name };
 
-    // On ajoute le payload dans la propriété req pour pouvoir l'utiliser dans les routes
-    req.body = { id, name };
-
-    // On passe au controller ou au mw suivant: tout s'est bien passé
-    next();
+    next(); // Passe au middleware suivant si le token est valide
   } catch (err) {
-    // Le jwt est invalide: on envoit une 401 l'user n'est pas autorisé à accéder à la ressource
-    return response(res, { statusCode: 401, message: "Unauthorized" });
+    // En cas d'erreur dans la vérification du token, envoie une réponse d'erreur 401
+    return res.status(401).send({ message: "Unauthorized" });
   }
 };

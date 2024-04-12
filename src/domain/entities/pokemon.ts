@@ -6,5 +6,5 @@ export interface Pokemon {
 
 export interface PokemonData {
   name: string;
-  type: string;
+  typeId: number[];
 }

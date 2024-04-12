@@ -1,5 +1,5 @@
 import * as pokemonRepository from "../../infrastructure/repositories/pokemonRepository";
-import { Pokemon, PokemonData } from "../../domain/entities/pokemon";
+import { Pokemon, PokemonData } from "../entities/pokemon";
 
 export const getAllPokemons = async (): Promise<Pokemon[]> => {
   return await pokemonRepository.findAll();

@@ -1,13 +1,18 @@
 import { Request, Response } from "express";
 import * as trainerService from "../../../domain/services/trainerService";
 
+/**
+ * Enregistre un nouveau dresseur avec un nom d'utilisateur et un mot de passe.
+ * @param {Request} req - La requête HTTP, contenant dans le corps le nom d'utilisateur et le mot de passe.
+ * @param {Response} res - La réponse HTTP.
+ */
 export const registerTrainer = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
-      return res
-        .status(400)
-        .send({ message: "Username and password are required." });
+      return res.status(400).send({
+        message: "Le nom d'utilisateur et le mot de passe sont requis.",
+      });
     }
     const newTrainer = await trainerService.createTrainer(username, password);
     return res.status(201).send(newTrainer);
@@ -16,10 +21,15 @@ export const registerTrainer = async (req: Request, res: Response) => {
       return res.status(409).send({ message: error.message });
     }
     console.error(error);
-    return res.status(500).send({ message: "Internal server error" });
+    return res.status(500).send({ message: "Erreur interne du serveur" });
   }
 };
 
+/**
+ * Connecte un dresseur en vérifiant son nom d'utilisateur et son mot de passe.
+ * @param {Request} req - La requête HTTP, contenant dans le corps le nom d'utilisateur et le mot de passe.
+ * @param {Response} res - La réponse HTTP.
+ */
 export const loginTrainer = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
@@ -34,10 +44,10 @@ export const loginTrainer = async (req: Request, res: Response) => {
       });
       return res.status(200).send({ accessToken: tokens.accessToken });
     } else {
-      return res.status(401).send({ message: "Invalid credentials" });
+      return res.status(401).send({ message: "Identifiants invalides" });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).send({ message: "Internal server error" });
+    return res.status(500).send({ message: "Erreur interne du serveur" });
   }
 };

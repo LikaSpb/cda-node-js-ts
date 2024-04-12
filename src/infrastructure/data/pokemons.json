@@ -2,21 +2,50 @@
   {
     "id": 1,
     "name": "Bulbizarre",
-    "typeId": [3]
+    "typeId": [
+      3
+    ]
   },
   {
     "id": 2,
     "name": "Caninos",
-    "typeId": [2]
+    "typeId": [
+      2
+    ]
   },
   {
     "id": 3,
     "name": "Carapuce",
-    "typeId": [1]
+    "typeId": [
+      1
+    ]
   },
   {
     "id": 4,
     "name": "Électhor",
-    "typeId": [4]
+    "typeId": [
+      4
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Pikachu",
+    "typeId": [
+      4
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Pikachu",
+    "typeId": [
+      4
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Pikachu",
+    "typeId": [
+      4
+    ]
   }
 ]
