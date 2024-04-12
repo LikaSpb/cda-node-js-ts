@@ -29,6 +29,8 @@ Pour configurer ce projet sur votre machine locale, suivez ces étapes :
     ```
     PORT=8080
     JWT_SECRET=VotreSecretJWT
+    NODE_ENV=development
+    REFRESH_SECRET=blablabla
     ```
 
 ## Lancement de l'Application
