@@ -1,29 +1,53 @@
-import * as pokemonRepository from "../../infrastructure/repositories/pokemonRepository";
-import { Pokemon, PokemonData } from "../entities/pokemon";
+import { PokemonRepository } from "../../infrastructure/repositories/PokemonRepository";
+import { NewPokemons, Pokemon } from "../entities/Pokemon";
 
-export const getAllPokemons = async (): Promise<Pokemon[]> => {
-  return await pokemonRepository.findAll();
-};
+export class PokemonService {
+  private pokemonRepository: PokemonRepository;
 
-export const getPokemonById = async (
-  id: number
-): Promise<Pokemon | undefined> => {
-  return await pokemonRepository.findById(id);
-};
+  /**
+   * Construit une nouvelle instance de PokemonService.
+   */
+  constructor() {
+    this.pokemonRepository = new PokemonRepository();
+  }
 
-export const createPokemon = async (
-  pokemonData: PokemonData
-): Promise<Pokemon> => {
-  return await pokemonRepository.create(pokemonData);
-};
+  /**
+   * Récupère une liste de tous les Pokémon disponibles.
+   */
+  getAllPokemons = async () => {
+    return this.pokemonRepository.findAll();
+  };
 
-export const updatePokemon = async (
-  id: number,
-  pokemonData: Partial<PokemonData>
-): Promise<Pokemon | undefined> => {
-  return await pokemonRepository.update(id, pokemonData);
-};
+  /**
+   * Récupère un Pokémon spécifique par son identifiant.
+   * @param {string} id - L'identifiant du Pokémon à récupérer.
+   */
+  getPokemonById = async (id: string) => {
+    return this.pokemonRepository.findById(id);
+  };
 
-export const deletePokemon = async (id: number): Promise<boolean> => {
-  return await pokemonRepository.remove(id);
-};
+  /**
+   * Crée un nouveau Pokémon dans la base de données.
+   * @param {NewPokemons} pokemonData - Les données du nouveau Pokémon à créer.
+   */
+  createPokemon = async (pokemonData: NewPokemons) => {
+    return this.pokemonRepository.create(pokemonData);
+  };
+
+  /**
+   * Met à jour les données d'un Pokémon existant.
+   * @param {string} id - L'identifiant du Pokémon à mettre à jour.
+   * @param {Partial<NewPokemons>} pokemonData - Un objet contenant les données à mettre à jour.
+   */
+  updatePokemon = async (id: string, pokemonData: Partial<NewPokemons>) => {
+    return this.pokemonRepository.update(id, pokemonData);
+  };
+
+  /**
+   * Supprime un Pokémon de la base de données.
+   * @param {string} id - L'identifiant du Pokémon à supprimer.
+   */
+  deletePokemon = async (id: string) => {
+    return this.pokemonRepository.delete(id);
+  };
+}

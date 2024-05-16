@@ -1,40 +1,86 @@
-import fs from "fs";
-import path from "path";
-import { Type } from "../../domain/entities/type";
-
-const dataPath = path.join(__dirname, "../../../data/types.json");
-
-/**
- * Lit le fichier JSON des types et le convertit en tableau de types.
- * @returns {Promise<Type[]>} Une promesse résolue avec un tableau de tous les types.
- */
-const readTypeFile = async (): Promise<Type[]> => {
-  const data = await fs.promises.readFile(dataPath, "utf-8");
-  return JSON.parse(data);
-};
+import { db } from "../data";
+import { types } from "../data/schema";
+import { Type } from "../../domain/entities/Type";
+import { eq } from "drizzle-orm";
 
 /**
- * Écrit un tableau de types dans le fichier JSON.
- * @param {Type[]} data - Le tableau de types à écrire.
+ * Repository qui gère le CRUD des types de Pokémon
  */
-const writeTypeFile = async (data: Type[]) => {
-  await fs.promises.writeFile(dataPath, JSON.stringify(data, null, 2), "utf-8");
-};
+export class TypeRepository {
+  /**
+   * Récupère tous les types de Pokémon
+   */
+   findAll() {
+    try {
+      return db.query.types.findMany({
+        columns: {
+          id: true,
+          name: true,
+        },
+      });
+    } catch (err) {
+      console.error("Error fetching all types:", err);
+      throw new Error("Impossible de récupérer les types");
+    }
+  }
 
-/**
- * Récupère tous les types enregistrés.
- * @returns {Promise<Type[]>} Une promesse résolue avec un tableau de tous les types.
- */
-export const findAll = async (): Promise<Type[]> => {
-  return await readTypeFile();
-};
+  /**
+   * Récupère un type de Pokémon par son identifiant
+   * @param id - L'identifiant du type
+   */
+   findById(id: string) {
+    try {
+      return db.query.types.findFirst({
+        where: eq(types.id, id),
+        columns: {
+          id: true,
+          name: true,
+        },
+      });
+    } catch (err) {
+      console.error("Error fetching type by ID:", err);
+      throw new Error("Impossible de récupérer le type");
+    }
+  }
 
-/**
- * Trouve un type par son identifiant.
- * @param {number} id - L'identifiant du type à trouver.
- * @returns {Promise<Type | undefined>} Une promesse résolue avec le type trouvé ou undefined si aucun type n'est trouvé.
- */
-export const findById = async (id: number): Promise<Type | undefined> => {
-  const types = await readTypeFile();
-  return types.find((type: Type) => type.id === id);
-};
+  /**
+   * Crée un nouveau type de Pokémon
+   * @param type - Les données du nouveau type
+   */
+   createType(type: Omit<Type, "id">) {
+    try {
+      return db.insert(types).values(type).execute();
+    } catch (err) {
+      console.error("Error creating type:", err);
+      throw new Error("Impossible de créer le type");
+    }
+  }
+
+  /**
+   * Met à jour un type de Pokémon
+   * @param id - L'identifiant du type à mettre à jour
+   * @param type - Les nouvelles données pour le type
+   */
+   updateType(id: string, type: Partial<Type>) {
+    try {
+      return db.update(types).set(type).where(eq(types.id, id)).execute();
+    } catch (err) {
+      console.error("Error updating type:", err);
+      throw new Error("Impossible de mettre à jour le type");
+    }
+  }
+
+  /**
+   * Supprime un type de Pokémon par son identifiant
+   * @param id - L'identifiant du type à supprimer
+   */
+  async deleteType(id: string) {
+    return db
+      .delete(types)
+      .where(eq(types.id, id))
+      .catch((err) => {
+        console.error("Error deleting type:", err);
+        throw new Error("Impossible de supprimer le type");
+      });
+  }
+}

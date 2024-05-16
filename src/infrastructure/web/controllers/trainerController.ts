@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import * as trainerService from "../../../domain/services/trainerService";
+import { AuthService } from "../../../domain/services/AuthService";
+import { TrainerRepository } from "../../repositories/TrainerRepository";
+
+const authService = new AuthService();
+const trainerRpository = new TrainerRepository();
 
 /**
  * Enregistre un nouveau dresseur avec un nom d'utilisateur et un mot de passe.
@@ -14,9 +18,9 @@ export const registerTrainer = async (req: Request, res: Response) => {
         message: "Le nom d'utilisateur et le mot de passe sont requis.",
       });
     }
-    const newTrainer = await trainerService.createTrainer(username, password);
-    return res.status(201).send(newTrainer);
-  } catch (error: any) {
+    const newTrainer = await authService.createTrainer(username, password);
+    return res.status(201).send({ username: username }); // Assure-toi que newTrainer contient username
+  } catch (error) {
     if (error instanceof Error && error.message === "Username already exists") {
       return res.status(409).send({ message: error.message });
     }
@@ -33,7 +37,7 @@ export const registerTrainer = async (req: Request, res: Response) => {
 export const loginTrainer = async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
-    const tokens = await trainerService.authenticateTrainer(username, password);
+    const tokens = await authService.authenticateTrainer(username, password);
     if (tokens) {
       res.cookie("refreshToken", tokens.refreshToken, {
         httpOnly: true,
@@ -48,6 +52,6 @@ export const loginTrainer = async (req: Request, res: Response) => {
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).send({ message: "Erreur interne du serveur" });
+    return res.status(400).send({ message: "Erreur interne du serveur" });
   }
 };

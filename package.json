@@ -5,31 +5,45 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "dev": "ts-node-dev --respawn --transpile-only src/app.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "generate": "drizzle-kit generate pg --config=src/config/drizzle.config.ts",
+    "migrate": "tsx -r dotenv/config src/infrastructure/data/migrate.ts",
+    "drop": "drizzle-kit drop --config=src/config/drizzle.config.ts",
+    "studio": "drizzle-kit studio --config=src/config/drizzle.config.ts",
+    "doc": "typedoc"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.21.2",
+    "drizzle-orm": "^0.30.10",
     "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2"
+    "faker": "^6.6.6",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.5"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.24.4",
     "@babel/preset-typescript": "^7.24.1",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.6",
+    "@types/pg": "^8.11.6",
     "@types/supertest": "^6.0.2",
     "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.2",
-    "ts-node-dev": "^2.0.0"
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.10.2"
   }
 }

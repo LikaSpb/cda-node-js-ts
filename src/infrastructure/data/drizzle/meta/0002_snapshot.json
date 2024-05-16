@@ -1,0 +1,294 @@
+{
+  "id": "e280b8da-4349-44c5-b9b2-95821bf2a6c2",
+  "prevId": "31c60d7b-27ab-4da1-919e-46cfc5f17e49",
+  "version": "6",
+  "dialect": "postgresql",
+  "tables": {
+    "public.abilities": {
+      "name": "abilities",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "effect": {
+          "name": "effect",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.battles": {
+      "name": "battles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "pokemonId": {
+          "name": "pokemonId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "opponentPokemonId": {
+          "name": "opponentPokemonId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "winnerPokemonId": {
+          "name": "winnerPokemonId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "battleDate": {
+          "name": "battleDate",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "battles_pokemonId_pokemons_id_fk": {
+          "name": "battles_pokemonId_pokemons_id_fk",
+          "tableFrom": "battles",
+          "tableTo": "pokemons",
+          "columnsFrom": [
+            "pokemonId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "battles_opponentPokemonId_pokemons_id_fk": {
+          "name": "battles_opponentPokemonId_pokemons_id_fk",
+          "tableFrom": "battles",
+          "tableTo": "pokemons",
+          "columnsFrom": [
+            "opponentPokemonId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "battles_winnerPokemonId_pokemons_id_fk": {
+          "name": "battles_winnerPokemonId_pokemons_id_fk",
+          "tableFrom": "battles",
+          "tableTo": "pokemons",
+          "columnsFrom": [
+            "winnerPokemonId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.pokemon_abilities": {
+      "name": "pokemon_abilities",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "pokemonId": {
+          "name": "pokemonId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "abilityId": {
+          "name": "abilityId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pokemon_abilities_pokemonId_pokemons_id_fk": {
+          "name": "pokemon_abilities_pokemonId_pokemons_id_fk",
+          "tableFrom": "pokemon_abilities",
+          "tableTo": "pokemons",
+          "columnsFrom": [
+            "pokemonId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "pokemon_abilities_abilityId_abilities_id_fk": {
+          "name": "pokemon_abilities_abilityId_abilities_id_fk",
+          "tableFrom": "pokemon_abilities",
+          "tableTo": "abilities",
+          "columnsFrom": [
+            "abilityId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.pokemons": {
+      "name": "pokemons",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "typeId": {
+          "name": "typeId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pokemons_typeId_types_id_fk": {
+          "name": "pokemons_typeId_types_id_fk",
+          "tableFrom": "pokemons",
+          "tableTo": "types",
+          "columnsFrom": [
+            "typeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.trainers": {
+      "name": "trainers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.types": {
+      "name": "types",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

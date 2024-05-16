@@ -1,0 +1,27 @@
+{
+  "version": "6",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1715774846643,
+      "tag": "0000_tense_molecule_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1715865440480,
+      "tag": "0001_confused_mother_askani",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1715866129584,
+      "tag": "0002_hesitant_deadpool",
+      "breakpoints": true
+    }
+  ]
+}

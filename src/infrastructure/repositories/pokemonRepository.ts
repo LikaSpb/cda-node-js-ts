@@ -1,96 +1,75 @@
-import fs from "fs";
-import path from "path";
-import { Pokemon, PokemonData } from "../../domain/entities/pokemon";
+import { db } from "../data";
+import { pokemons } from "../data/schema";
+import { NewPokemons } from "../../domain/entities/Pokemon";
+import { eq } from "drizzle-orm";
 
-const dataPath = path.join(
-  __dirname,
-  "../../infrastructure/data/pokemons.json"
-);
+export class PokemonRepository {
+  /**
+   * Récupère toutes les entrées de Pokémon dans la base de données.
+   * @returns {Promise<any[]>} Une promesse qui résout avec un tableau de tous les Pokémon.
+   */
+  findAll() {
+    return db.query.pokemons.findMany({
+      columns: {
+        id: true,
+        name: true,
+        typeId: true,
+      },
+    });
+  }
 
-/**
- * Lit le fichier JSON des Pokémon et le convertit en tableau de Pokémon.
- * @returns {Promise<Pokemon[]>} Une promesse résolue avec un tableau de Pokémon.
- */
-const readPokemonFile = async (): Promise<Pokemon[]> => {
-  const data = await fs.promises.readFile(dataPath, "utf-8");
-  return JSON.parse(data);
-};
+  /**
+   * Récupère un Pokémon spécifique par son identifiant.
+   * @param {string} id - L'identifiant du Pokémon à récupérer.
+   * @returns {Promise<any>} Une promesse qui résout avec le Pokémon trouvé.
+   */
+  findById(id: string) {
+    return db.query.pokemons.findFirst({
+      where: eq(pokemons.id, id),
+      columns: {
+        id: true,
+        name: true,
+        typeId: true,
+      },
+    });
+  }
 
-/**
- * Écrit un tableau de Pokémon dans le fichier JSON.
- * @param {Pokemon[]} data - Tableau de Pokémon à écrire.
- */
-const writePokemonFile = async (data: Pokemon[]) => {
-  await fs.promises.writeFile(dataPath, JSON.stringify(data, null, 2), "utf-8");
-};
+  /**
+   * Crée une nouvelle entrée de Pokémon dans la base de données.
+   * @param {NewPokemons} pokemonData - Les données du nouveau Pokémon.
+   * @returns {Promise<any>} Une promesse qui résout avec les détails du Pokémon créé.
+   */
+  create(pokemonData: NewPokemons) {
+    return db.insert(pokemons).values(pokemonData).execute();
+  }
 
-/**
- * Récupère tous les Pokémon enregistrés.
- * @returns {Promise<Pokemon[]>} Une promesse résolue avec un tableau de tous les Pokémon.
- */
-export const findAll = async (): Promise<Pokemon[]> => {
-  return await readPokemonFile();
-};
+  /**
+   * Met à jour les données d'un Pokémon existant.
+   * @param {string} id - L'identifiant du Pokémon à mettre à jour.
+   * @param {Partial<NewPokemons>} pokemonData - Un objet contenant les données à mettre à jour.
+   * @returns {Promise<any>} Une promesse qui résout avec les détails du Pokémon mis à jour.
+   */
+  update(id: string, pokemonData: Partial<NewPokemons>) {
+    return db
+      .update(pokemons)
+      .set(pokemonData)
+      .where(eq(pokemons.id, id))
+      .execute();
+  }
 
-/**
- * Trouve un Pokémon par son identifiant.
- * @param {number} id - Identifiant du Pokémon à trouver.
- * @returns {Promise<Pokemon | undefined>} Une promesse résolue avec le Pokémon trouvé ou undefined si aucun Pokémon n'est trouvé.
- */
-export const findById = async (id: number): Promise<Pokemon | undefined> => {
-  const pokemons = await readPokemonFile();
-  return pokemons.find((pokemon) => pokemon.id === id);
-};
-
-/**
- * Crée un nouveau Pokémon et l'ajoute au stockage.
- * @param {pokemonData} pokemonData- Les données du nouveau Pokémon.
- * @returns {Promise<Pokemon>} Une promesse résolue avec le Pokémon nouvellement créé.
- */
-export const create = async (pokemonData: PokemonData): Promise<Pokemon> => {
-  const pokemons = await readPokemonFile();
-  const nextId =
-    pokemons.length > 0
-      ? Math.max(...pokemons.map((p) => p.id as number)) + 1
-      : 1;
-  const newPokemon: Pokemon = {
-    id: nextId,
-    name: pokemonData.name,
-    typeId: pokemonData.typeId,
-  };
-
-  pokemons.push(newPokemon);
-  await writePokemonFile(pokemons);
-  return newPokemon;
-};
-
-/**
- * Met à jour un Pokémon par son ID avec les nouvelles données fournies.
- * @param {number} id - ID du Pokémon à mettre à jour.
- * @param {Partial<PokemonData>} pokemonData - Données partielles pour la mise à jour du Pokémon.
- * @returns {Promise<Pokemon | undefined>} Une promesse résolue avec le Pokémon mis à jour, ou undefined si aucun Pokémon correspondant n'a été trouvé.
- */
-export const update = async (
-  id: number,
-  pokemonData: Partial<PokemonData>
-): Promise<Pokemon | undefined> => {
-  const pokemons = await readPokemonFile();
-  const index = pokemons.findIndex((pokemon) => pokemon.id === id);
-  if (index === -1) return undefined;
-
-  pokemons[index] = { ...pokemons[index], ...pokemonData };
-  await writePokemonFile(pokemons);
-  return pokemons[index];
-};
-
-/**
- * Supprime un Pokémon du stockage par son identifiant.
- * @param {number} id - Identifiant du Pokémon à supprimer.
- * @returns {Promise<boolean>} Une promesse résolue avec true si le Pokémon a été supprimé, ou false si aucun Pokémon correspondant n'a été trouvé.
- */
-export const remove = async (id: number): Promise<boolean> => {
-  const pokemons = await readPokemonFile();
-  const filteredPokemons = pokemons.filter((pokemon) => pokemon.id !== id);
-  await writePokemonFile(filteredPokemons);
-  return filteredPokemons.length < pokemons.length;
-};
+  /**
+   * Supprime une entrée de Pokémon de la base de données.
+   * @param {string} id - L'identifiant du Pokémon à supprimer.
+   * @returns {Promise<boolean>} Une promesse qui indique si la suppression a été réussie.
+   */
+  delete(id: string) {
+    return db
+      .delete(pokemons)
+      .where(eq(pokemons.id, id))
+      .execute()
+      .catch((err) => {
+        console.error("Error during deleting pokemon:", err);
+        throw new Error("Impossible de supprimer le pokémon");
+      });
+  }
+}

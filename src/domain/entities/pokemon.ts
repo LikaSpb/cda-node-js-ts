@@ -1,10 +1,7 @@
-export interface Pokemon {
-  id?: number;
-  name: string;
-  typeId: number[];
-}
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { pokemons } from "../../infrastructure/data/schema/pokemons";
 
-export interface PokemonData {
-  name: string;
-  typeId: number[];
-}
+export type Pokemon = InferSelectModel<typeof pokemons>;
+export type NewPokemons = InferInsertModel<typeof pokemons>;
+
+export type PokemonColumns = { [K in keyof Pokemon]?: boolean }

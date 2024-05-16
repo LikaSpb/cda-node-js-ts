@@ -1,8 +1,9 @@
+import { PokemonService } from "../../../domain/services/PokemonService";
 import * as express from "express";
-import * as pokemonService from "../../../domain/services/pokemonService";
+const pokemonService = new PokemonService();
 
 /**
- * Obtient tous les Pokémon et les renvoie au format JSON.
+ * Récupère tous les Pokémon.
  * @param {express.Request} req - La requête HTTP.
  * @param {express.Response} res - La réponse HTTP.
  */
@@ -13,17 +14,14 @@ export const getAllPokemons = async (
   try {
     const pokemons = await pokemonService.getAllPokemons();
     res.json(pokemons);
-  } catch (err) {
-    if (err instanceof Error) {
-      res.status(400).send(err.message);
-    } else {
-      res.status(400).send("Une erreur inconnue s'est produite");
-    }
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).send("Une erreur inconnue s'est produite: " + err.message);
   }
 };
 
 /**
- * Obtient un Pokémon par son identifiant et le renvoie au format JSON.
+ * Récupère un Pokémon par son identifiant.
  * @param {express.Request} req - La requête HTTP.
  * @param {express.Response} res - La réponse HTTP.
  */
@@ -32,23 +30,21 @@ export const getPokemonById = async (
   res: express.Response
 ) => {
   try {
-    const pokemon = await pokemonService.getPokemonById(Number(req.params.id));
+    const id = req.params.id;
+    const pokemon = await pokemonService.getPokemonById(id);
     if (pokemon) {
       res.json(pokemon);
     } else {
       res.status(404).send("Pokémon non trouvé");
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      res.status(400).send(err.message);
-    } else {
-      res.status(400).send("Une erreur inconnue s'est produite");
-    }
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).send("Une erreur inconnue s'est produite: " + err.message);
   }
 };
 
 /**
- * Crée un nouveau Pokémon avec les données fournies et le renvoie au format JSON.
+ * Crée un nouveau Pokémon.
  * @param {express.Request} req - La requête HTTP.
  * @param {express.Response} res - La réponse HTTP.
  */
@@ -56,12 +52,17 @@ export const createPokemon = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const newPokemon = await pokemonService.createPokemon(req.body);
-  res.status(201).json(newPokemon);
+  try {
+    const newPokemon = await pokemonService.createPokemon(req.body);
+    res.status(201).json(newPokemon);
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).send("Impossible de créer le Pokémon: " + err.message);
+  }
 };
 
 /**
- * Met à jour un Pokémon existant avec les données fournies et le renvoie au format JSON.
+ * Met à jour un Pokémon existant.
  * @param {express.Request} req - La requête HTTP.
  * @param {express.Response} res - La réponse HTTP.
  */
@@ -70,24 +71,16 @@ export const updatePokemon = async (
   res: express.Response
 ) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    if (isNaN(id)) {
-      return res.status(400).send("Format d'ID invalide");
-    }
-
+    const id = req.params.id;
     const updatedPokemon = await pokemonService.updatePokemon(id, req.body);
-
     if (updatedPokemon) {
       res.json(updatedPokemon);
     } else {
       res.status(404).send("Pokémon non trouvé");
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).send(err.message);
-    } else {
-      res.status(500).send("Une erreur inconnue s'est produite");
-    }
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).send("Une erreur inconnue s'est produite: " + err.message);
   }
 };
 
@@ -101,23 +94,15 @@ export const deletePokemon = async (
   res: express.Response
 ) => {
   try {
-    const id = parseInt(req.params.id, 10);
-    if (isNaN(id)) {
-      return res.status(400).send("Format d'ID invalide");
-    }
-
+    const id = req.params.id;
     const success = await pokemonService.deletePokemon(id);
-
     if (success) {
       res.status(204).send();
     } else {
       res.status(404).send("Pokémon non trouvé");
     }
-  } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).send(err.message);
-    } else {
-      res.status(500).send("Une erreur inconnue s'est produite");
-    }
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).send("Une erreur inconnue s'est produite: " + err.message);
   }
 };
